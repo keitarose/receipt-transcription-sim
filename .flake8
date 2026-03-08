@@ -1,10 +1,14 @@
 [flake8]
 max-line-length = 88
-extend-ignore = E203, E501, W503
-exclude =
-    .venv,
-    __pycache__,
-    .git,
-    build,
-    dist,
-    *.egg-info
+extend-ignore =
+    # E203: whitespace before ':' — Black adds this in slices (e.g., x[1 : 2])
+    E203,
+    # E501: line too long — Black handles line length; flake8's check clashes on trailing comments
+    E501,
+    # W503: line break before binary operator — Black prefers this style (PEP 8 updated to allow it)
+    W503,
+    # E231: missing whitespace after ',' — Black sometimes omits this in tight expressions
+    E231
+per-file-ignores =
+    # Allow unused imports in __init__.py (common for re-exports)
+    __init__.py: F401

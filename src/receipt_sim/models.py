@@ -2,13 +2,7 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
-
-
-class ConfigValidationError(Exception):
-    """Raised when configuration validation fails."""
-
-    pass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -117,10 +111,16 @@ class ReceiptResponse:
 class SimEvent:
     time: float
     event_type: str
-    data: dict
+    data: dict = field(default_factory=dict)
 
-    def __lt__(self, other: SimEvent) -> bool:
+    def __lt__(self, other: "SimEvent") -> bool:
         return self.time < other.time
 
-    def __le__(self, other: SimEvent) -> bool:
+    def __le__(self, other: "SimEvent") -> bool:
         return self.time <= other.time
+
+
+class ConfigValidationError(Exception):
+    """Raised when configuration validation fails."""
+
+    pass
