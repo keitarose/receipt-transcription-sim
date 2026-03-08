@@ -30,3 +30,6 @@ htmlcov/
 
 # Pytest cache
 .pytest_cache/
+
+# Node modules (if using any JS for frontend)
+frontend/node_modules/
