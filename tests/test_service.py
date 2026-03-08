@@ -89,6 +89,7 @@ class TestResponseTime:
         times = []
         for _ in range(10_000):
             resp = process_receipt(_make_request(), 0.5, profiles, config, rng)
+            assert resp is not None
             times.append(resp.response_time)
 
         mean = np.mean(times)
@@ -106,7 +107,8 @@ class TestResponseTime:
             # With quality=0.0 and base_p_correct=1.0, p_correct=1.0*1.0*modifier
             # For grocery_major correct_modifier=0.5, so p_correct=0.5
             # Use quality=0 to maximize p_correct
-            times.append(resp.response_time)
+            if resp is not None:
+                times.append(resp.response_time)
 
         # Some will be corrected, some not — use a config that forces correction
         config2 = _config_with_service(base_p_fail=0.0, base_p_correct=1.0)
@@ -119,6 +121,7 @@ class TestResponseTime:
         rng2 = np.random.default_rng(42)
         for _ in range(10_000):
             resp = process_receipt(_make_request(), 0.0, forced_profiles, config2, rng2)
+            assert resp is not None
             assert resp.was_corrected
             times2.append(resp.response_time)
 
@@ -133,6 +136,7 @@ class TestResponseTime:
         rng = np.random.default_rng(42)
         for _ in range(10_000):
             resp = process_receipt(_make_request(), 0.5, profiles, config, rng)
+            assert resp is not None
             assert resp.response_time >= 0.0
 
 
@@ -143,6 +147,7 @@ class TestApproval:
         profiles = _profiles(config)
         rng = np.random.default_rng(42)
         resp = process_receipt(_make_request(), 0.5, profiles, config, rng)
+        assert resp is not None
         assert resp.tokens_awarded == config.service.base_reward
 
     def test_rejection_awards_zero(self):
@@ -151,6 +156,7 @@ class TestApproval:
         profiles = _profiles(config)
         rng = np.random.default_rng(42)
         resp = process_receipt(_make_request(), 0.5, profiles, config, rng)
+        assert resp is not None
         assert resp.tokens_awarded == 0
         assert resp.message is not None
 
@@ -165,6 +171,7 @@ class TestApproval:
         }
         rng = np.random.default_rng(42)
         resp = process_receipt(_make_request(), 0.0, forced_profiles, config, rng)
+        assert resp is not None
         assert resp.was_corrected is True
         assert resp.tokens_awarded == config.service.base_reward
 
@@ -203,5 +210,6 @@ class TestResponseEchoes:
         rng = np.random.default_rng(42)
         req = _make_request()
         resp = process_receipt(req, 0.5, profiles, config, rng)
+        assert resp is not None
         assert resp.receipt_id == req.receipt_id
         assert resp.user_id == req.user_id

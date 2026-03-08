@@ -21,40 +21,37 @@ def _base_config() -> SimConfig:
 
 
 def _make_member(**overrides) -> PopulationMember:
-    defaults = dict(
-        user_id="u-001",
-        age_group="25-34",
-        lifestage="Young Family",
-        social_grade="C1",
-        geography="London",
-        household_size=3,
-        has_dogs=False,
-        has_cats=False,
-        panel_tenure_months=6.0,
-        lambda_i=2.0,
-        quality_score=0.7,
-        retailer_mix={"grocery_major": 1.0},
-        baseline_engagement=0.8,
-        segmentation_modifier=0.1,
-        token_balance=0,
+    member = PopulationMember(
+        user_id=overrides.get("user_id", "u-001"),  # type: ignore[arg-type]
+        age_group=overrides.get("age_group", "25-34"),  # type: ignore[arg-type]
+        lifestage=overrides.get("lifestage", "Young Family"),  # type: ignore[arg-type]
+        social_grade=overrides.get("social_grade", "C1"),  # type: ignore[arg-type]
+        geography=overrides.get("geography", "London"),  # type: ignore[arg-type]
+        household_size=overrides.get("household_size", 3),  # type: ignore[arg-type]
+        has_dogs=overrides.get("has_dogs", False),  # type: ignore[arg-type]
+        has_cats=overrides.get("has_cats", False),  # type: ignore[arg-type]
+        panel_tenure_months=overrides.get("panel_tenure_months", 6.0),  # type: ignore[arg-type]
+        lambda_i=overrides.get("lambda_i", 2.0),  # type: ignore[arg-type]
+        quality_score=overrides.get("quality_score", 0.7),  # type: ignore[arg-type]
+        retailer_mix=overrides.get("retailer_mix", {"grocery_major": 1.0}),  # type: ignore[arg-type]
+        baseline_engagement=overrides.get("baseline_engagement", 0.8),  # type: ignore[arg-type]
+        segmentation_modifier=overrides.get("segmentation_modifier", 0.1),  # type: ignore[arg-type]
+        token_balance=overrides.get("token_balance", 0),  # type: ignore[arg-type]
     )
-    defaults.update(overrides)
-    return PopulationMember(**defaults)
+    return member
 
 
 def _make_response(**overrides) -> ReceiptResponse:
-    defaults = dict(
-        receipt_id="r-001",
-        user_id="u-001",
-        timestamp=10.0,
-        response_time=2.0,
-        was_corrected=False,
-        decision="approved",
-        tokens_awarded=10,
-        message=None,
+    return ReceiptResponse(
+        receipt_id=overrides.get("receipt_id", "r-001"),  # type: ignore[arg-type]
+        user_id=overrides.get("user_id", "u-001"),  # type: ignore[arg-type]
+        timestamp=overrides.get("timestamp", 10.0),  # type: ignore[arg-type]
+        response_time=overrides.get("response_time", 2.0),  # type: ignore[arg-type]
+        was_corrected=overrides.get("was_corrected", False),  # type: ignore[arg-type]
+        decision=overrides.get("decision", "approved"),  # type: ignore[arg-type]
+        tokens_awarded=overrides.get("tokens_awarded", 10),  # type: ignore[arg-type]
+        message=overrides.get("message", None),  # type: ignore[arg-type]
     )
-    defaults.update(overrides)
-    return ReceiptResponse(**defaults)
 
 
 class TestApplyReward:

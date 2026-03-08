@@ -15,6 +15,10 @@ receipt-sim = "receipt_sim.cli:main"
 [tool.mypy]
 packages = ["receipt_sim"]
 mypy_path = "src"
+
+[[tool.mypy.overrides]]
+module = ["scipy", "scipy.*"]
+ignore_missing_imports = true
 [dependency-groups]
 dev = [
     "pytest>=7.0",

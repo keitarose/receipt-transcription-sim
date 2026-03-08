@@ -4,7 +4,7 @@ from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
-from scipy import stats
+from scipy import stats  # type: ignore[import-untyped]
 
 from receipt_sim.config import load_config
 from receipt_sim.population import generate_population
@@ -118,8 +118,8 @@ class TestPopulationGeneration:
         large = [m.segmentation_modifier for m in pop if m.household_size >= 4]
 
         assert len(small) > 10 and len(large) > 10
-        _, p_value = stats.ttest_ind(large, small, alternative="greater")
-        assert p_value < 0.05
+        result = stats.ttest_ind(large, small, alternative="greater")
+        assert result.pvalue < 0.05  # type: ignore[union-attr]
 
     def test_household_size_valid(self):
         """TC-POP-09: All household sizes >= 1."""
