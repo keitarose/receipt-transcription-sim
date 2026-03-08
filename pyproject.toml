@@ -12,6 +12,9 @@ dependencies = [
 [project.scripts]
 receipt-sim = "receipt_sim.cli:main"
 
+[tool.mypy]
+packages = ["receipt_sim"]
+mypy_path = "src"
 [dependency-groups]
 dev = [
     "pytest>=7.0",
@@ -20,6 +23,8 @@ dev = [
     "mypy>=1.0",
     "flake8>=7.0",
     "black>=24.0",
+    "types-pyyaml>=6.0.12.20250915",
+    "pandas-stubs>=3.0.0.260204",
 ]
 
 [tool.pytest.ini_options]

@@ -53,7 +53,7 @@ cd frontend && npm run dev
 
 ## Project Structure
 
-```
+```text
 receipt-transcription-sim/
 ├── config/
 │   ├── default.yaml              # Base configuration
@@ -170,7 +170,7 @@ uv run pytest tests/test_engine.py -v
 
 ## CLI Reference
 
-```
+```text
 usage: receipt-sim [-h] [--config CONFIG] [--scenario SCENARIO] [--seed SEED]
                    [--output OUTPUT] [--json JSON] [--events-csv EVENTS_CSV]
                    [--quiet]

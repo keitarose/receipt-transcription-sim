@@ -6,7 +6,7 @@ The receipt transcription simulator models a consumer reward panel where members
 
 ## Module Dependency Graph
 
-```
+```text
 cli.py
   └── engine.py
         ├── population.py → models.py
@@ -24,7 +24,7 @@ The engine (`engine.py`) uses a heap-based priority queue (Python's `heapq`) to 
 
 ### Event Flow
 
-```
+```text
 PERIOD_TICK → update logger period
 RECEIPT_ARRIVAL → process through service → schedule SERVICE_RESPONSE or RECEIPT_FAILED
 SERVICE_RESPONSE → create RECEIPT_APPROVED or RECEIPT_REJECTED
@@ -43,7 +43,7 @@ Each population member has an independent arrival process:
 
 ## Service Pipeline
 
-```
+```text
 Receipt arrives
     │
     ├─ compute_effective_p_fail(base, quality, retailer)
