@@ -6,16 +6,16 @@ simulation:
 
 service:
   base_p_fail: 0.05
-  base_p_correct: 0.20
+  base_p_correct: 0.10
   mu_fast: 2.0           # mean response time (time units) for uncorrected path
   sigma_fast: 0.5
   mu_slow: 8.0           # mean response time (time units) for corrected path
   sigma_slow: 2.0
-  base_p_approve: 0.85
+  base_p_approve: 0.98
   base_reward: 10         # tokens per approved receipt
 
 population:
-  size: 1000
+  size: 60000
   lambda_alpha: 2.0       # Gamma shape for submission rate
   lambda_beta: 1.0        # Gamma scale for submission rate
   quality_a: 5.0          # Beta shape a for receipt quality
