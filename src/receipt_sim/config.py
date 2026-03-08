@@ -24,7 +24,11 @@ def load_config(path: str, scenario: str | None = None) -> SimConfig:
         base = yaml.safe_load(f)
 
     if scenario is not None:
-        scenario_path = Path(path).parent / "scenarios" / f"{scenario}.yaml"
+        scenario_p = Path(scenario)
+        if scenario_p.is_file():
+            scenario_path = scenario_p
+        else:
+            scenario_path = Path(path).parent / "scenarios" / f"{scenario}.yaml"
         with open(scenario_path, "r") as f:
             overrides = yaml.safe_load(f)
         if overrides:
