@@ -88,6 +88,18 @@ class SimulationLogger:
         """Return summaries sorted by period."""
         return [self._summaries[k] for k in sorted(self._summaries)]
 
+    def get_totals(self) -> dict:
+        """Return aggregate counts across all periods."""
+        summaries = self.get_period_summaries()
+        return {
+            "events": len(self.events),
+            "arrivals": sum(s.arrivals for s in summaries),
+            "failures": sum(s.failures for s in summaries),
+            "approvals": sum(s.approvals for s in summaries),
+            "rejections": sum(s.rejections for s in summaries),
+            "tokens": sum(s.total_tokens for s in summaries),
+        }
+
     def to_dataframe(self) -> pd.DataFrame:
         """Convert period summaries to a pandas DataFrame."""
         summaries = self.get_period_summaries()

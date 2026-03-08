@@ -104,6 +104,21 @@ def validate_config(raw: dict) -> None:
             f"activity.seasonal_multipliers must have 12 entries, got {len(multipliers)}"
         )
 
+    pop_weight_fields = [
+        ("age_groups", pop.get("age_groups", {})),
+        ("lifestages", pop.get("lifestages", {})),
+        ("social_grades", pop.get("social_grades", {})),
+        ("geographies", pop.get("geographies", {})),
+        ("household_size_weights", pop.get("household_size_weights", {})),
+    ]
+    for field_name, weights in pop_weight_fields:
+        if weights:
+            total = sum(weights.values())
+            if not (0.999 <= total <= 1.001):
+                raise ConfigValidationError(
+                    f"population.{field_name} weights must sum to 1.0, got {total:.6f}"
+                )
+
     retailers = raw["retailers"]
     if not retailers:
         raise ConfigValidationError("At least one retailer must be defined")

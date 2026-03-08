@@ -46,29 +46,22 @@ def generate_population(
     return members
 
 
+def _weighted_choice(weights: dict, rng: np.random.Generator):
+    """Sample one key from a dict of {key: probability} weights."""
+    keys = list(weights.keys())
+    probs = list(weights.values())
+    return rng.choice(keys, p=probs)
+
+
 def assign_segmentation(config: SimConfig, rng: np.random.Generator) -> dict:
     """Draw segmentation attributes for one member."""
     pop = config.population
 
-    age_keys = list(pop.age_groups.keys())
-    age_probs = list(pop.age_groups.values())
-    age_group = rng.choice(age_keys, p=age_probs)
-
-    ls_keys = list(pop.lifestages.keys())
-    ls_probs = list(pop.lifestages.values())
-    lifestage = rng.choice(ls_keys, p=ls_probs)
-
-    sg_keys = list(pop.social_grades.keys())
-    sg_probs = list(pop.social_grades.values())
-    social_grade = rng.choice(sg_keys, p=sg_probs)
-
-    geo_keys = list(pop.geographies.keys())
-    geo_probs = list(pop.geographies.values())
-    geography = rng.choice(geo_keys, p=geo_probs)
-
-    hs_keys = list(pop.household_size_weights.keys())
-    hs_probs = list(pop.household_size_weights.values())
-    household_size = int(rng.choice(hs_keys, p=hs_probs))
+    age_group = _weighted_choice(pop.age_groups, rng)
+    lifestage = _weighted_choice(pop.lifestages, rng)
+    social_grade = _weighted_choice(pop.social_grades, rng)
+    geography = _weighted_choice(pop.geographies, rng)
+    household_size = int(_weighted_choice(pop.household_size_weights, rng))
 
     has_dogs = bool(rng.random() < pop.pet_dog_probability)
     has_cats = bool(rng.random() < pop.pet_cat_probability)

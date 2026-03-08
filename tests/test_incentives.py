@@ -75,21 +75,18 @@ class TestEngagementBoost:
     def test_zero_balance_no_boost(self):
         """TC-INC-03: Zero balance gives zero boost."""
         member = _make_member(token_balance=0)
-        config = _base_config()
-        assert compute_engagement_boost(member, config) == 0.0
+        assert compute_engagement_boost(member) == 0.0
 
     def test_moderate_balance(self):
         """TC-INC-04: Moderate balance gives proportional boost."""
         member = _make_member(token_balance=100)
-        config = _base_config()
-        boost = compute_engagement_boost(member, config)
+        boost = compute_engagement_boost(member)
         assert abs(boost - 0.1) < 1e-9
 
     def test_cap_applied(self):
         """TC-INC-05: Very high balance is capped at 0.3."""
         member = _make_member(token_balance=10_000)
-        config = _base_config()
-        assert compute_engagement_boost(member, config) == 0.3
+        assert compute_engagement_boost(member) == 0.3
 
 
 class TestEffectiveSubmissionRate:

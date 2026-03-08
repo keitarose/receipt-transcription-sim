@@ -11,15 +11,17 @@ def apply_reward(member: PopulationMember, response: ReceiptResponse) -> int:
     return member.token_balance
 
 
-def compute_engagement_boost(member: PopulationMember, config: SimConfig) -> float:
+_ENGAGEMENT_BOOST_RATE = 0.001  # tokens → engagement points conversion rate
+_ENGAGEMENT_BOOST_CAP = 0.3  # max engagement boost from tokens
+
+
+def compute_engagement_boost(member: PopulationMember) -> float:
     """Compute an engagement multiplier based on recent token income.
 
     Higher balance → slight increase in submission frequency.
     Uses a soft-saturation curve: boost = min(cap, balance * rate).
     """
-    rate = 0.001  # tokens → engagement points conversion rate
-    cap = 0.3  # max engagement boost from tokens
-    return min(cap, member.token_balance * rate)
+    return min(_ENGAGEMENT_BOOST_CAP, member.token_balance * _ENGAGEMENT_BOOST_RATE)
 
 
 def effective_submission_rate(
@@ -34,7 +36,7 @@ def effective_submission_rate(
       - engagement boost from incentives (additive)
       - baseline engagement (multiplicative)
     """
-    engagement_boost = compute_engagement_boost(member, config)
+    engagement_boost = compute_engagement_boost(member)
     rate = member.lambda_i * (
         1.0 + member.segmentation_modifier + seasonal_mult + engagement_boost
     )

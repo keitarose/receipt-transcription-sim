@@ -23,7 +23,7 @@ class TestLoadConfig:
         config = load_config(CONFIG_PATH)
         assert isinstance(config, SimConfig)
         assert config.service.base_p_fail == 0.05
-        assert config.population.size == 1000
+        assert config.population.size == 60000
         assert len(config.retailers) == 8
 
     def test_load_with_scenario_override(self):

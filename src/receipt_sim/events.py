@@ -10,7 +10,6 @@ from receipt_sim.models import ReceiptRequest, ReceiptResponse, SimEvent
 
 class EventType(str, Enum):
     RECEIPT_ARRIVAL = "RECEIPT_ARRIVAL"
-    SERVICE_ATTEMPT = "SERVICE_ATTEMPT"
     SERVICE_RESPONSE = "SERVICE_RESPONSE"
     RECEIPT_FAILED = "RECEIPT_FAILED"
     RECEIPT_APPROVED = "RECEIPT_APPROVED"

@@ -116,9 +116,6 @@ class SimEvent:
     def __lt__(self, other: "SimEvent") -> bool:
         return self.time < other.time
 
-    def __le__(self, other: "SimEvent") -> bool:
-        return self.time <= other.time
-
 
 class ConfigValidationError(Exception):
     """Raised when configuration validation fails."""

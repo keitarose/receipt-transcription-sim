@@ -99,30 +99,25 @@ def main(argv: list[str] | None = None) -> int:
 def _print_summary(logger) -> None:
     """Print a human-readable summary to stdout."""
     summaries = logger.get_period_summaries()
-    total_arrivals = sum(s.arrivals for s in summaries)
-    total_failures = sum(s.failures for s in summaries)
-    total_approvals = sum(s.approvals for s in summaries)
-    total_rejections = sum(s.rejections for s in summaries)
-    total_tokens = sum(s.total_tokens for s in summaries)
-    total_events = len(logger.events)
+    totals = logger.get_totals()
 
     print("=" * 50)
     print("Receipt Transcription Simulation — Summary")
     print("=" * 50)
     print(f"Periods simulated:  {len(summaries)}")
-    print(f"Total events:       {total_events}")
-    print(f"Total arrivals:     {total_arrivals}")
-    print(f"Total failures:     {total_failures}")
-    print(f"Total approvals:    {total_approvals}")
-    print(f"Total rejections:   {total_rejections}")
-    print(f"Total tokens:       {total_tokens}")
+    print(f"Total events:       {totals['events']}")
+    print(f"Total arrivals:     {totals['arrivals']}")
+    print(f"Total failures:     {totals['failures']}")
+    print(f"Total approvals:    {totals['approvals']}")
+    print(f"Total rejections:   {totals['rejections']}")
+    print(f"Total tokens:       {totals['tokens']}")
 
-    if total_arrivals > 0:
-        print(f"Failure rate:       {total_failures / total_arrivals:.2%}")
-    if total_approvals + total_rejections > 0:
+    if totals["arrivals"] > 0:
+        print(f"Failure rate:       {totals['failures'] / totals['arrivals']:.2%}")
+    if totals["approvals"] + totals["rejections"] > 0:
         print(
             f"Approval rate:      "
-            f"{total_approvals / (total_approvals + total_rejections):.2%}"
+            f"{totals['approvals'] / (totals['approvals'] + totals['rejections']):.2%}"
         )
     print("=" * 50)
 
@@ -148,14 +143,7 @@ def _write_json(logger, path: str) -> None:
             }
             for s in summaries
         ],
-        "totals": {
-            "events": len(logger.events),
-            "arrivals": sum(s.arrivals for s in summaries),
-            "failures": sum(s.failures for s in summaries),
-            "approvals": sum(s.approvals for s in summaries),
-            "rejections": sum(s.rejections for s in summaries),
-            "tokens": sum(s.total_tokens for s in summaries),
-        },
+        "totals": logger.get_totals(),
     }
     with open(path, "w") as f:
         json.dump(data, f, indent=2)

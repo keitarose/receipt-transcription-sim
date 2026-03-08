@@ -20,7 +20,7 @@ from receipt_sim.incentives import (
     effective_submission_rate,
 )
 from receipt_sim.logger import SimulationLogger
-from receipt_sim.models import PopulationMember, ReceiptRequest, SimConfig, SimEvent
+from receipt_sim.models import PopulationMember, ReceiptRequest, ReceiptResponse, SimConfig, SimEvent
 from receipt_sim.population import generate_population
 from receipt_sim.retailers import (
     RetailerProfile,
@@ -89,12 +89,8 @@ class SimulationEngine:
             self._handle_arrival(event)
         elif etype == EventType.SERVICE_RESPONSE:
             self._handle_service_response(event)
-        elif etype == EventType.RECEIPT_FAILED:
-            self._handle_receipt_failed(event)
         elif etype == EventType.RECEIPT_APPROVED:
             self._handle_approved(event)
-        elif etype == EventType.RECEIPT_REJECTED:
-            self._handle_rejected(event)
 
         self.logger.log_event(event)
 
@@ -133,43 +129,26 @@ class SimulationEngine:
         self._schedule_next_arrival(member, event.time)
 
     def _handle_service_response(self, event: SimEvent) -> None:
-        from receipt_sim.models import ReceiptResponse as RR
-
-        response = RR(
-            receipt_id=event.data["receipt_id"],
-            user_id=event.data["user_id"],
-            timestamp=event.data["timestamp"],
-            response_time=event.data["response_time"],
-            was_corrected=event.data["was_corrected"],
-            decision=event.data["decision"],
-            tokens_awarded=event.data["tokens_awarded"],
-            message=event.data.get("message"),
-        )
+        response = self._response_from_event_data(event.data)
         outcome = create_outcome_event(event.time, response)
         self._push_event(outcome)
 
-    def _handle_receipt_failed(self, event: SimEvent) -> None:
-        pass  # failure already logged
-
     def _handle_approved(self, event: SimEvent) -> None:
-        user_id = event.data["user_id"]
-        member = self.user_index[user_id]
-        from receipt_sim.models import ReceiptResponse as RR
-
-        response = RR(
-            receipt_id=event.data["receipt_id"],
-            user_id=user_id,
-            timestamp=event.data["timestamp"],
-            response_time=event.data["response_time"],
-            was_corrected=event.data["was_corrected"],
-            decision=event.data["decision"],
-            tokens_awarded=event.data["tokens_awarded"],
-            message=event.data.get("message"),
-        )
+        member = self.user_index[event.data["user_id"]]
+        response = self._response_from_event_data(event.data)
         apply_reward(member, response)
 
-    def _handle_rejected(self, event: SimEvent) -> None:
-        pass  # rejection already logged
+    def _response_from_event_data(self, data: dict) -> ReceiptResponse:
+        return ReceiptResponse(
+            receipt_id=data["receipt_id"],
+            user_id=data["user_id"],
+            timestamp=data["timestamp"],
+            response_time=data["response_time"],
+            was_corrected=data["was_corrected"],
+            decision=data["decision"],
+            tokens_awarded=data["tokens_awarded"],
+            message=data.get("message"),
+        )
 
     def _schedule_next_arrival(self, member: PopulationMember, after: float) -> None:
         """Schedule the next receipt arrival for a member."""
@@ -201,8 +180,10 @@ class SimulationEngine:
 
     def _get_seasonal_multiplier(self, time: float) -> float:
         """Look up the seasonal multiplier for the current simulation time."""
-        hours_per_month = self.config.simulation.duration / 12.0
-        if hours_per_month <= 0:
+        multipliers = self.config.activity.seasonal_multipliers
+        n = len(multipliers)
+        hours_per_slot = self.config.simulation.duration / n
+        if hours_per_slot <= 0:
             return 0.0
-        month_index = int(time / hours_per_month) % 12
-        return self.config.activity.seasonal_multipliers[month_index]
+        month_index = int(time / hours_per_slot) % n
+        return multipliers[month_index]
