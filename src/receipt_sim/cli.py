@@ -75,7 +75,7 @@ def main(argv: list[str] | None = None) -> int:
         new_sim = replace(config.simulation, seed=args.seed)
         config = replace(config, simulation=new_sim)
 
-    engine = SimulationEngine(config)
+    engine = SimulationEngine(config, show_progress=not args.quiet)
     logger = engine.run()
 
     summary_df = logger.to_dataframe()

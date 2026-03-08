@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import heapq
+import math
 import uuid
 
 import numpy as np
+from tqdm import tqdm
 
 from receipt_sim.events import (
     EventType,
@@ -34,8 +36,9 @@ from receipt_sim.service import process_receipt
 class SimulationEngine:
     """Heap-based discrete-event simulation engine."""
 
-    def __init__(self, config: SimConfig) -> None:
+    def __init__(self, config: SimConfig, show_progress: bool = True) -> None:
         self.config = config
+        self.show_progress = show_progress
         self.rng = np.random.default_rng(config.simulation.seed)
         self.clock: float = 0.0
         self.event_queue: list[SimEvent] = []
@@ -44,6 +47,7 @@ class SimulationEngine:
         self.retailer_profiles: dict[RetailerType, RetailerProfile] = {}
         self.logger = SimulationLogger()
         self._current_period: int = 0
+        self._progress_bar: tqdm | None = None
 
     def initialize(self) -> None:
         """Set up population, retailer profiles, and schedule initial events."""
@@ -68,12 +72,24 @@ class SimulationEngine:
         """Execute the simulation until the event queue is empty or duration exceeded."""
         self.initialize()
 
-        while self.event_queue:
-            event = heapq.heappop(self.event_queue)
-            if event.time > self.config.simulation.duration:
-                break
-            self.clock = event.time
-            self._dispatch(event)
+        total_periods = math.ceil(
+            self.config.simulation.duration / self.config.simulation.period_length
+        )
+        with tqdm(
+            total=total_periods,
+            desc="Simulating",
+            unit="period",
+            disable=not self.show_progress,
+            dynamic_ncols=True,
+        ) as pbar:
+            self._progress_bar = pbar
+            while self.event_queue:
+                event = heapq.heappop(self.event_queue)
+                if event.time > self.config.simulation.duration:
+                    break
+                self.clock = event.time
+                self._dispatch(event)
+            self._progress_bar = None
 
         return self.logger
 
@@ -97,6 +113,15 @@ class SimulationEngine:
     def _handle_period_tick(self, event: SimEvent) -> None:
         self._current_period = event.data["period"]
         self.logger.set_period(self._current_period)
+        if self._progress_bar is not None:
+            summary = self.logger._get_summary(self._current_period - 1)
+            self._progress_bar.set_postfix(
+                arrivals=summary.arrivals,
+                failures=summary.failures,
+                approvals=summary.approvals,
+                queue=len(self.event_queue),
+            )
+            self._progress_bar.update(1)
 
     def _handle_arrival(self, event: SimEvent) -> None:
         user_id = event.data["user_id"]
