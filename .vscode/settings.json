@@ -1,5 +1,6 @@
 {
   "editor.formatOnSave": true,
+  "python.analysis.extraPaths": ["src"],
   "[python]": {
     "editor.defaultFormatter": "ms-python.black-formatter",
     "editor.formatOnSave": true,
