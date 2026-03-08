@@ -7,7 +7,9 @@ from pathlib import Path
 
 from receipt_sim.cli import main, parse_args
 
-CONFIG_PATH = str(Path(__file__).parent.parent / "config" / "default.yaml")
+CONFIG_PATH = str(
+    Path(__file__).parent.parent / "config" / "scenarios" / "test_small.yaml"
+)
 SCENARIO_PATH = str(
     Path(__file__).parent.parent / "config" / "scenarios" / "baseline.yaml"
 )
