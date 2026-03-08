@@ -1,0 +1,5 @@
+# High failure scenario for stress testing
+service:
+  base_p_fail: 0.20
+  base_p_correct: 0.35
+  base_p_approve: 0.70

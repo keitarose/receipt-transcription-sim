@@ -1,0 +1,3 @@
+# Baseline scenario — identical to defaults, exists as an explicit named scenario
+simulation:
+  seed: 42
