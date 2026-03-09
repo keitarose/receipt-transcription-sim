@@ -1,21 +1,21 @@
 simulation:
   seed: 42
-  duration: 720          # simulation time units (e.g., 720 = 30 days × 24 hours)
+  duration: 8640          # simulation time units (e.g., 720 = 30 days × 24 hours)
   time_unit: "hour"
   period_length: 24      # re-evaluate activity every 24 time units (1 day)
 
 service:
   base_p_fail: 0.05
   base_p_correct: 0.10
-  mu_fast: 2.0           # mean response time (time units) for uncorrected path
-  sigma_fast: 0.5
+  mu_fast: 0.033           # mean response time (time units) for uncorrected path
+  sigma_fast: 0.0001
   mu_slow: 8.0           # mean response time (time units) for corrected path
   sigma_slow: 2.0
   base_p_approve: 0.98
-  base_reward: 10         # tokens per approved receipt
+  base_reward: 20         # tokens per approved receipt
 
 population:
-  size: 60000
+  size: 1000
   lambda_alpha: 2.0       # Gamma shape for submission rate
   lambda_beta: 1.0        # Gamma scale for submission rate
   quality_a: 5.0          # Beta shape a for receipt quality

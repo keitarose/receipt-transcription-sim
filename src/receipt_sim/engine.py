@@ -7,7 +7,7 @@ import math
 import uuid
 
 import numpy as np
-from tqdm import tqdm
+from tqdm import tqdm  # type: ignore[import-untyped]
 
 from receipt_sim.events import (
     EventType,
@@ -22,7 +22,13 @@ from receipt_sim.incentives import (
     effective_submission_rate,
 )
 from receipt_sim.logger import SimulationLogger
-from receipt_sim.models import PopulationMember, ReceiptRequest, ReceiptResponse, SimConfig, SimEvent
+from receipt_sim.models import (
+    PopulationMember,
+    ReceiptRequest,
+    ReceiptResponse,
+    SimConfig,
+    SimEvent,
+)
 from receipt_sim.population import generate_population
 from receipt_sim.retailers import (
     RetailerProfile,
